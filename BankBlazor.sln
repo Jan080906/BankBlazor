@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.810.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankBlazor", "BankBlazor\BankBlazor.csproj", "{0EC07DAA-8B20-4130-9567-EED5C43686E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankDataAccessLibrary", "BankDataAccessLibrary\BankDataAccessLibrary.csproj", "{9EE8C49D-0E52-41EB-9AA1-1D0AA6D4C960}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EC07DAA-8B20-4130-9567-EED5C43686E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EC07DAA-8B20-4130-9567-EED5C43686E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EC07DAA-8B20-4130-9567-EED5C43686E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EC07DAA-8B20-4130-9567-EED5C43686E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EE8C49D-0E52-41EB-9AA1-1D0AA6D4C960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EE8C49D-0E52-41EB-9AA1-1D0AA6D4C960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EE8C49D-0E52-41EB-9AA1-1D0AA6D4C960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EE8C49D-0E52-41EB-9AA1-1D0AA6D4C960}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E654D4BB-FEEC-4EFC-A1D1-158C2820FD61}
+	EndGlobalSection
+EndGlobal
