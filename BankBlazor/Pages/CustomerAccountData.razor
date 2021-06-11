@@ -1,0 +1,46 @@
+﻿@page "/customer_account/data"
+
+@using BankDataAccessLibrary
+@using BankDataAccessLibrary.Models
+@using BankBlazor.Data
+@*@inject CustomerAccountService CustomerAccountService*@
+
+<h1>CustomerAccount</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (customerAccounts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>IBAN</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customerAccount in customerAccounts)
+            {
+                <tr>
+                    <td>@customerAccount.Name</td>
+                    <td>@customerAccount.Address</td>
+                    <td>@customerAccount.IBAN</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<CustomerAccountModel> customerAccounts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customerAccounts = SqliteDataAccess.LoadAccount();
+    }
+}
