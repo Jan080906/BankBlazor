@@ -22,7 +22,7 @@ namespace BankDataAccessLibrary
             _configuration = configuration;
         }
 
-        public static List<CustomerAccountModel> LoadAccount()
+        public static List<CustomerAccountModel> LoadAccounts()
         {
             using (IDbConnection cnn = new SQLiteConnection(@"DataSource=./Bank.db;"))
             {
@@ -32,13 +32,31 @@ namespace BankDataAccessLibrary
             }
         }
 
+        public static CustomerAccountModel LoadAccountByAccountNumber(int number)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(@"DataSource=./Bank.db;"))
+            {
+                var output = cnn.QueryFirst<CustomerAccountModel>("select * from CustomerAccount where Number = @number", new { number });
+
+                return output;
+            }
+        }
+
         public static void SaveAccount(CustomerAccountModel customerAccount)
         {
             using (IDbConnection cnn = new SQLiteConnection(@"DataSource=./Bank.db;"))
             {
-                    cnn.Execute("insert into CustomerAccount (Number, Name, Address, IBAN) " +
-                        "values (@Number, @Name, @Address, @IBAN)", customerAccount);
+                    cnn.Execute("insert into CustomerAccount (Name, Address, IBAN, Amount, CreatedWhen, LastModifiedWhen) " +
+                        "values (@Name, @Address, @IBAN, @Amount, @CreatedWhen, @LastModifiedWhen)", customerAccount);
+            }
 
+        }
+
+        public static void UpdateAccount(CustomerAccountModel customerAccount)
+        {
+            using (IDbConnection cnn = new SQLiteConnection(@"DataSource=./Bank.db;"))
+            {
+                cnn.Execute("update CustomerAccount set Amount = @Amount where Number = @Number", customerAccount);
             }
 
         }

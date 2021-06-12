@@ -7,6 +7,7 @@
   <ItemGroup>
     <None Remove="Bank.db" />
     <None Remove="System.Data.SQLite.Core" />
+    <None Remove="IbanNet" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Bank.db">
@@ -15,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.114.2" />
+    <PackageReference Include="IbanNet" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BankDataAccessLibrary\BankDataAccessLibrary.csproj">

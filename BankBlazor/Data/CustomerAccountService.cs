@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using BankDataAccessLibrary;
 using BankDataAccessLibrary.Models;
+using IbanNet;
+using IbanNet.Builders;
 
 namespace BankBlazor.Data
 {
@@ -11,7 +13,7 @@ namespace BankBlazor.Data
     {
         public static List<CustomerAccountModel> LoadAccount()
         {
-            return SqliteDataAccess.LoadAccount();
+            return SqliteDataAccess.LoadAccounts();
         }
     }
 }
