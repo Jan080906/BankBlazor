@@ -9,7 +9,22 @@
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (customerAccounts == null)
+<h4>Create Account</h4>
+
+<EditForm Model="@customerAccountInput" OnValidSubmit="@CreateAccount">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="name" @bind-Value="customerAccountInput.Name" />
+    <InputText id="address" @bind-Value="customerAccountInput.Address" />
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</EditForm>
+
+<h4>All Accounts</h4>
+
+@if (customerAccounts == null)      
 {
     <p><em>Loading...</em></p>
 }
@@ -38,9 +53,28 @@ else
 
 @code {
     private List<CustomerAccountModel> customerAccounts;
+    private CustomerAccountModel customerAccountInput = new CustomerAccountModel();
 
     protected override async Task OnInitializedAsync()
     {
         customerAccounts = SqliteDataAccess.LoadAccount();
     }
+
+    protected void CreateAccount()
+    {
+        CustomerAccountModel input = new CustomerAccountModel()
+        {
+            Name = customerAccountInput.Name,
+            Address = customerAccountInput.Address,
+            Number = Guid.NewGuid().ToString(),
+            IBAN = Guid.NewGuid().ToString()
+        };
+
+        SqliteDataAccess.SaveAccount(input);
+
+        customerAccounts.Add(input);
+
+        customerAccountInput = new CustomerAccountModel();
+    }
+
 }
