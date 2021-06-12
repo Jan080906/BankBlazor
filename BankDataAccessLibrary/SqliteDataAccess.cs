@@ -22,41 +22,41 @@ namespace BankDataAccessLibrary
             _configuration = configuration;
         }
 
-        public static List<CustomerAccountModel> LoadAccounts()
+        public static List<BankAccounts> LoadAccounts()
         {
             using (IDbConnection cnn = new SQLiteConnection(@"DataSource=./Bank.db;"))
             {
-                var output = cnn.Query<CustomerAccountModel>("select * from CustomerAccount", new DynamicParameters());
+                var output = cnn.Query<BankAccounts>("select * from BankAccounts", new DynamicParameters());
 
                 return output.ToList();
             }
         }
 
-        public static CustomerAccountModel LoadAccountByAccountNumber(int number)
+        public static BankAccounts LoadAccountByAccountNumber(string number)
         {
             using (IDbConnection cnn = new SQLiteConnection(@"DataSource=./Bank.db;"))
             {
-                var output = cnn.QueryFirst<CustomerAccountModel>("select * from CustomerAccount where Number = @number", new { number });
+                var output = cnn.QueryFirst<BankAccounts>("select * from BankAccounts where AccountNo = @number", new { number });
 
                 return output;
             }
         }
 
-        public static void SaveAccount(CustomerAccountModel customerAccount)
+        public static void SaveAccount(BankAccounts customerAccount)
         {
             using (IDbConnection cnn = new SQLiteConnection(@"DataSource=./Bank.db;"))
             {
-                    cnn.Execute("insert into CustomerAccount (Name, Address, IBAN, Amount, CreatedWhen, LastModifiedWhen) " +
-                        "values (@Name, @Address, @IBAN, @Amount, @CreatedWhen, @LastModifiedWhen)", customerAccount);
+                    cnn.Execute("insert into BankAccounts (AccountNo ,Name, Address, IBAN, Amount, CreatedWhen, LastModifiedWhen) " +
+                        "values (@AccountNo ,@Name, @Address, @IBAN, @Amount, @CreatedWhen, @LastModifiedWhen)", customerAccount);
             }
 
         }
 
-        public static void UpdateAccount(CustomerAccountModel customerAccount)
+        public static void UpdateAccount(BankAccounts customerAccount)
         {
             using (IDbConnection cnn = new SQLiteConnection(@"DataSource=./Bank.db;"))
             {
-                cnn.Execute("update CustomerAccount set Amount = @Amount where Number = @Number", customerAccount);
+                cnn.Execute("update BankAccounts set Amount = @Amount where Number = @Number", customerAccount);
             }
 
         }

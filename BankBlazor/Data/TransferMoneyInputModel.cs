@@ -3,8 +3,8 @@ namespace BankBlazor.Data
 {
     public class TransferMoneyInputModel
     {
-        public int FromAccountNumber { get; set; }
-        public int ToAccountNumber { get; set; }
+        public string FromAccountNumber { get; set; }
+        public string ToAccountNumber { get; set; }
         public decimal Amount { get; set; }
     }
 }

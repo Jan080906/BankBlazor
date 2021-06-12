@@ -3,7 +3,11 @@
 @using BankDataAccessLibrary
 @using BankDataAccessLibrary.Models
 @using BankBlazor.Data
+@using IbanNet.Builders;
+@using IbanNet.Registry;
 @*@inject CustomerAccountService CustomerAccountService*@
+@inject IBankAccountBuilder IBankAccountBuilder
+
 
 <h1>CustomerAccount</h1>
 
@@ -28,7 +32,7 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputNumber id="accountNumber" @bind-Value="customerAccountInput.Number" />
+    <InputText id="accountNumber" @bind-Value="customerAccountInput.AccountNo" />
     <InputNumber id="amount" @bind-Value="customerAccountInput.Amount" />
 
     <button type="submit" class="btn btn-primary">Put Money</button>
@@ -41,8 +45,8 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputNumber id="fromAccountNumber" @bind-Value="transferMoneyInput.FromAccountNumber" />
-    <InputNumber id="toAccountNumber" @bind-Value="transferMoneyInput.ToAccountNumber" />
+    <InputText id="fromAccountNumber" @bind-Value="transferMoneyInput.FromAccountNumber" />
+    <InputText id="toAccountNumber" @bind-Value="transferMoneyInput.ToAccountNumber" />
     <InputNumber id="amount" @bind-Value="transferMoneyInput.Amount" />
 
     <button type="submit" class="btn btn-primary">Transfer</button>
@@ -71,7 +75,7 @@ else
             @foreach (var customerAccount in customerAccounts)
             {
                 <tr>
-                    <td>@customerAccount.Number</td>
+                    <td>@customerAccount.AccountNo</td>
                     <td>@customerAccount.Name</td>
                     <td>@customerAccount.Address</td>
                     <td>@customerAccount.IBAN</td>
@@ -83,8 +87,8 @@ else
 }
 
 @code {
-    private List<CustomerAccountModel> customerAccounts;
-    private CustomerAccountModel customerAccountInput = new CustomerAccountModel();
+    private List<BankAccounts> customerAccounts;
+    private BankAccounts customerAccountInput = new BankAccounts();
     private TransferMoneyInputModel transferMoneyInput = new TransferMoneyInputModel();
 
     protected override async Task OnInitializedAsync()
@@ -94,27 +98,40 @@ else
 
     protected void CreateAccount()
     {
-        CustomerAccountModel input = new CustomerAccountModel()
+        BankAccounts acct = customerAccounts.OrderByDescending(a => a.CreatedWhen).FirstOrDefault();
+
+        int acctNo = acct == null ? 1 : Int16.Parse(acct.AccountNo) + 1;
+
+        IBankAccountBuilder = new IbanBuilder();
+
+        IBankAccountBuilder.WithCountry("NL", IbanRegistry.Default)
+                            .WithBankAccountNumber(acctNo.ToString())
+                            .WithBankIdentifier("TEST");
+
+        string acctStr = String.Format("{0:0000000000}", acctNo);
+
+        BankAccounts input = new BankAccounts()
         {
+            AccountNo = acctStr,
             Name = customerAccountInput.Name,
             Address = customerAccountInput.Address,
             Amount = 0,
-            IBAN = Guid.NewGuid().ToString(),
-            CreatedWhen = DateTime.UtcNow.ToString(),
-            LastModifiedWhen = DateTime.UtcNow.ToString()
+            IBAN = IBankAccountBuilder.Build(),
+            CreatedWhen = DateTime.UtcNow,
+            LastModifiedWhen = DateTime.UtcNow
         };
 
         SqliteDataAccess.SaveAccount(input);
 
         customerAccounts = SqliteDataAccess.LoadAccounts();
 
-        customerAccountInput = new CustomerAccountModel();
+        customerAccountInput = new BankAccounts();
     }
 
     protected void Deposit()
     {
 
-        CustomerAccountModel acctToUpdate = SqliteDataAccess.LoadAccountByAccountNumber(customerAccountInput.Number);
+        BankAccounts acctToUpdate = SqliteDataAccess.LoadAccountByAccountNumber(customerAccountInput.AccountNo);
 
         acctToUpdate.Amount = acctToUpdate.Amount + (customerAccountInput.Amount * (decimal)0.99);
 
@@ -122,14 +139,14 @@ else
 
         customerAccounts = SqliteDataAccess.LoadAccounts();
 
-        customerAccountInput = new CustomerAccountModel();
+        customerAccountInput = new BankAccounts();
     }
 
     protected void Transfer()
     {
 
-        CustomerAccountModel fromAccount = SqliteDataAccess.LoadAccountByAccountNumber(transferMoneyInput.FromAccountNumber);
-        CustomerAccountModel toAccount = SqliteDataAccess.LoadAccountByAccountNumber(transferMoneyInput.ToAccountNumber);
+        BankAccounts fromAccount = SqliteDataAccess.LoadAccountByAccountNumber(transferMoneyInput.FromAccountNumber);
+        BankAccounts toAccount = SqliteDataAccess.LoadAccountByAccountNumber(transferMoneyInput.ToAccountNumber);
 
         fromAccount.Amount = fromAccount.Amount - transferMoneyInput.Amount;
 

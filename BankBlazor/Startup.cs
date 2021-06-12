@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BankBlazor.Data;
 using BankDataAccessLibrary;
+using IbanNet.Builders;
+using IbanNet.DependencyInjection.ServiceProvider;
+using IbanNet.DependencyInjection;
 
 namespace BankBlazor
 {
@@ -32,6 +35,9 @@ namespace BankBlazor
             services.AddSingleton<WeatherForecastService>();
             services.AddTransient<SqliteDataAccess>();
             services.AddTransient<CustomerAccountService>();
+            services.AddSingleton<IBankAccountBuilder, BbanBuilder>();
+            services.AddIbanNet(opts => opts.UseStrictValidation());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
