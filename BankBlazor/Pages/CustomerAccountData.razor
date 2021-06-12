@@ -35,6 +35,20 @@
 
 </EditForm>
 
+<h4>Transfer Money</h4>
+
+<EditForm Model="@transferMoneyInput" OnValidSubmit="@Transfer">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputNumber id="fromAccountNumber" @bind-Value="transferMoneyInput.FromAccountNumber" />
+    <InputNumber id="toAccountNumber" @bind-Value="transferMoneyInput.ToAccountNumber" />
+    <InputNumber id="amount" @bind-Value="transferMoneyInput.Amount" />
+
+    <button type="submit" class="btn btn-primary">Transfer</button>
+
+</EditForm>
+
 <h4>All Accounts</h4>
 
 @if (customerAccounts == null)
@@ -71,6 +85,7 @@ else
 @code {
     private List<CustomerAccountModel> customerAccounts;
     private CustomerAccountModel customerAccountInput = new CustomerAccountModel();
+    private TransferMoneyInputModel transferMoneyInput = new TransferMoneyInputModel();
 
     protected override async Task OnInitializedAsync()
     {
@@ -91,7 +106,7 @@ else
 
         SqliteDataAccess.SaveAccount(input);
 
-        customerAccounts.Add(input);
+        customerAccounts = SqliteDataAccess.LoadAccounts();
 
         customerAccountInput = new CustomerAccountModel();
     }
@@ -108,5 +123,24 @@ else
         customerAccounts = SqliteDataAccess.LoadAccounts();
 
         customerAccountInput = new CustomerAccountModel();
+    }
+
+    protected void Transfer()
+    {
+
+        CustomerAccountModel fromAccount = SqliteDataAccess.LoadAccountByAccountNumber(transferMoneyInput.FromAccountNumber);
+        CustomerAccountModel toAccount = SqliteDataAccess.LoadAccountByAccountNumber(transferMoneyInput.ToAccountNumber);
+
+        fromAccount.Amount = fromAccount.Amount - transferMoneyInput.Amount;
+
+        SqliteDataAccess.UpdateAccount(fromAccount);
+
+        toAccount.Amount = toAccount.Amount + transferMoneyInput.Amount;
+
+        SqliteDataAccess.UpdateAccount(toAccount);
+
+        customerAccounts = SqliteDataAccess.LoadAccounts();
+
+        transferMoneyInput = new TransferMoneyInputModel();
     }
 }
