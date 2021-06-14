@@ -1,0 +1,180 @@
+﻿@page "/account/manage"
+
+@using BankDataAccessLibrary
+@using BankDataAccessLibrary.Models
+@using BankBlazor.Data.Models
+@using BankBlazor.Data
+@using IbanNet.Builders;
+@using IbanNet.Registry;
+@inject BankAccountService BankAccountService
+@inject IBankAccountBuilder IBankAccountBuilder
+
+<h1>Manage Bank Account</h1>
+
+<br />
+
+<h4>Create Account</h4>
+
+<EditForm Model="@createBankAccountInput" OnValidSubmit="@CreateAccount">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label for="name">Name: </label>
+    <InputText id="name" @bind-Value="createBankAccountInput.Name" /><br />
+
+    <label for="address">Address: </label>
+    <InputTextArea id="address" @bind-Value="createBankAccountInput.Address" /><br />
+
+    <label for="dob">Birth Date: </label>
+    <InputDate id="dob" @bind-Value="createBankAccountInput.DateOfBirth" /><br />
+
+    <label for="phone">Phone: </label>
+    <input type="tel" id="phone" name="phone" @bind="createBankAccountInput.PhoneNo"><br />
+
+    <button type="submit" class="btn btn-primary">Create</button><br />
+
+</EditForm>
+
+<br />
+<h4>Deposit</h4>
+
+<EditForm Model="@depositInput" OnValidSubmit="@Deposit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label for="accountNumber">Account No.: </label>
+    <InputText id="accountNumber" @bind-Value="depositInput.AccountNo" /><br />
+
+    <label for="amount">Amount: </label>
+    <InputNumber id="amount" @bind-Value="depositInput.Amount" /><br />
+
+    <button type="submit" class="btn btn-primary">Put Money</button>
+
+</EditForm>
+
+@if (depositFailMessage != null)
+{
+    <h1>Sorry, we could not able to deposit.</h1>
+    <h4>@depositFailMessage</h4>
+}
+
+<br />
+<h4>Transfer Money</h4>
+
+<EditForm Model="@transferMoneyInput" OnValidSubmit="@Transfer">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label for="fromAccountNumber">From Account No.: </label>
+    <InputText id="fromAccountNumber" @bind-Value="transferMoneyInput.FromAccountNumber" /><br />
+
+    <label for="toAccountNumber">To Account No.: </label>
+    <InputText id="toAccountNumber" @bind-Value="transferMoneyInput.ToAccountNumber" /><br />
+
+    <label for="amount">Amount: </label>
+    <InputNumber id="amount" @bind-Value="transferMoneyInput.Amount" /><br />
+
+    <button type="submit" class="btn btn-primary">Transfer</button>
+
+</EditForm>
+
+@if (depositFailMessage != null)
+{
+    <h1>Sorry, we could not able to deposit.</h1>
+    <h4>@transferFailMessage</h4>
+}
+
+<br />
+<h4>All Accounts</h4>
+
+@if (accounts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>IBAN</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var account in accounts)
+            {
+                <tr>
+                    <td>@account.AccountNo</td>
+                    <td>@account.Name</td>
+                    <td>@account.Address</td>
+                    <td>
+                        @account.IBAN
+                    </td>
+                    <td>@account.Amount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<BankAccounts> accounts;
+    private CreateBankAccountInputModel createBankAccountInput = new CreateBankAccountInputModel();
+    private DepositInputModel depositInput = new DepositInputModel();
+    private TransferMoneyInputModel transferMoneyInput = new TransferMoneyInputModel();
+    private string depositFailMessage = null;
+    private string transferFailMessage = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        accounts = await BankAccountService.GetAccounts();
+    }
+
+    protected async Task CreateAccount()
+    {
+        BankAccounts createdAccount = await BankAccountService.CreateAccount(createBankAccountInput);
+
+        accounts.Add(createdAccount);
+
+        createBankAccountInput = new CreateBankAccountInputModel();
+    }
+
+    protected async Task Deposit()
+    {
+        try
+        {
+            await BankAccountService.Deposit(depositInput);
+        }
+        catch (Exception ex)
+        {
+            depositFailMessage = ex.Message;
+        }
+
+        depositFailMessage = null;
+
+        accounts = await BankAccountService.GetAccounts();
+
+        depositInput = new DepositInputModel();
+    }
+
+    protected async Task Transfer()
+    {
+        try
+        {
+            await BankAccountService.Transfer(transferMoneyInput);
+        }
+        catch (Exception ex)
+        {
+            transferFailMessage = ex.Message;
+        }
+
+        transferFailMessage = null;
+
+        accounts = await BankAccountService.GetAccounts();
+
+        transferMoneyInput = new TransferMoneyInputModel();
+    }
+}

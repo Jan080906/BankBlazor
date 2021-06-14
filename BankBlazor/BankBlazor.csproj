@@ -9,6 +9,8 @@
     <None Remove="System.Data.SQLite.Core" />
     <None Remove="IbanNet" />
     <None Remove="IbanNet.DependencyInjection.ServiceProvider" />
+    <None Remove="Bank.db-journal" />
+    <None Remove="Data\Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Bank.db">
@@ -24,5 +26,8 @@
     <ProjectReference Include="..\BankDataAccessLibrary\BankDataAccessLibrary.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Models\" />
   </ItemGroup>
 </Project>

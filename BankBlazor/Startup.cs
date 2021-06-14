@@ -32,9 +32,9 @@ namespace BankBlazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
-            services.AddTransient<SqliteDataAccess>();
-            services.AddTransient<CustomerAccountService>();
+            services.AddTransient<IBankAccountRepository, BankAccountRepository>();
+            services.AddTransient<ISqliteDataAccess, SqliteDataAccess>();
+            services.AddTransient<BankAccountService>();
             services.AddSingleton<IBankAccountBuilder, BbanBuilder>();
             services.AddIbanNet(opts => opts.UseStrictValidation());
 
