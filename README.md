@@ -2,7 +2,5 @@
 Simple project to try blazor out !!
 
 # Notice !!
-If you are **Mac** user please change connection string relative path to be **"DataSource=./Bank.db;"**
-![hippo](https://media3.giphy.com/media/aUovxH8Vf9qDu/giphy.gif)
-
-# Example
+This project was develop on **mac** machine.
+If you are **window** user please change connection string relative path to be **"DataSource=.\\Bank.db;"** before running
