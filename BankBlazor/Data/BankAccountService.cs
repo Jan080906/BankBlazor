@@ -87,13 +87,16 @@ namespace BankBlazor.Data
                 throw new Exception($"Target account with account number {toAccount.AccountNo} is not exist");
             }
 
-            fromAccount.Amount = fromAccount.Amount - transferMoneyInput.Amount;
+            if (fromAccount.Amount > 0 && transferMoneyInput.Amount > 0)
+            {
+                fromAccount.Amount = fromAccount.Amount - transferMoneyInput.Amount;
 
-            await _bankAccountRepository.UpdateAccountAmount(fromAccount.Amount, fromAccount.AccountNo);
+                await _bankAccountRepository.UpdateAccountAmount(fromAccount.Amount, fromAccount.AccountNo);
 
-            toAccount.Amount = toAccount.Amount + transferMoneyInput.Amount;
+                toAccount.Amount = toAccount.Amount + transferMoneyInput.Amount;
 
-            await _bankAccountRepository.UpdateAccountAmount(toAccount.Amount, toAccount.AccountNo);
+                await _bankAccountRepository.UpdateAccountAmount(toAccount.Amount, toAccount.AccountNo);
+            }
         }
 
         public async Task<List<BankAccounts>> GetAccounts()
